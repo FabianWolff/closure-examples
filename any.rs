@@ -38,15 +38,26 @@ use prusti_contracts::*;
     }
 // end Prusti glue
 
-#[requires(f |= |i: i32| -> [ requires(true) ])]
+#[requires(f |= |arg: i32| -> [ requires(true) ])]
 #[ensures(
-    result ==> exists(|idx: usize| 0 <= idx && idx < vec_len(v)
-        && f ~>! |arg: i32| -> { arg == vec_lookup(v, idx) } { cl_result })
+    result ==>
+        exists(|idx: usize| 0 <= idx && idx < vec_len(v)
+            && forall(|idx2: usize| 0 <= idx2 && idx2 < idx
+                ==> f ~>! |arg: i32| -> { arg == vec_lookup(v, idx2) } { !cl_result })
+            && f ~>! |arg: i32| -> { arg == vec_lookup(v, idx) } { cl_result })
+)]
+#[ensures(
+    !result ==> forall(|idx: usize| 0 <= idx && idx < vec_len(v)
+        ==> f ~>! |arg: i32| -> { arg == vec_lookup(v, idx) } { !cl_result })
 )]
 fn any_vec<T: Fn(i32) -> bool>(v: &Vec<i32>, f: T) -> bool {
     let mut i = 0;
     while i < vec_len(v) {
         body_invariant!(i >= 0 && i < vec_len(v));
+        body_invariant!(
+            forall(|idx: usize| 0 <= idx && idx < i
+                ==> f ~>! |arg: i32| -> { arg == vec_lookup(v, idx) } { !cl_result })
+        );
         let el = vec_lookup(v, i);
         if f(el) {
             return true;
@@ -67,9 +78,9 @@ fn main() {
         &v,
         closure!(
             #[requires(true)]
-            #[ensures(result == (i % 2 == 0))]
-            |i: i32| -> bool { i % 2 == 0 }
-        ),
+            #[ensures(result == (i == 100))]
+            |i: i32| -> bool { i == 100 }
+        ), // should not verify!
     ));
     assert!(!any_vec(
         &v,
