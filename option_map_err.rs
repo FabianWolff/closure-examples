@@ -1,26 +1,67 @@
-// requires: match self {
-//     None => true,
-//     Some(x) => f |=! |arg| { requires: arg == outer(x) }
-// }
-// ensures: match old(self) {
-//     None => result == None,
-//     Some(x) => old(f) (x) ~~>
-//         { outer(result) == Some(result) }
-// }
-pub fn map<T, U, F: FnOnce(T) -> U>(slf: Option<T>, f: F) -> Option<U> {
-    match slf {
-        Some(x) => Some(f(x)),
-        None => None,
+use prusti_contracts::*;
+
+// Prusti glue for Option<i32>
+    enum MyOption {
+        None,
+        Some(i32),
     }
+
+    impl MyOption {
+        #[pure]
+        fn is_some(&self) -> bool {
+            matches!(self, MyOption::Some(_))
+        }
+
+        #[pure]
+        #[requires(self.is_some())]
+        fn unwrap(&self) -> i32 {
+            match self {
+                MyOption::Some(n) => *n,
+                MyOption::None => unreachable!(),
+            }
+        }
+    }
+
+    #[requires(
+        opt.is_some() ==>
+            f |=! |arg: i32| [ requires(arg == opt.unwrap()) ]
+    )]
+    #[ensures(old(opt.is_some()) == result.is_some())]
+    #[ensures(
+        old(opt.is_some()) ==>
+            f ~>! |arg: i32|
+                { arg == old(opt.unwrap()) }
+                { cl_result == result.unwrap() }
+    )]
+    fn map<F: FnMut(i32) -> i32>(opt: MyOption, f: &mut F) -> MyOption {
+        match opt {
+            MyOption::Some(x) => MyOption::Some(f(x)),
+            MyOption::None => MyOption::None,
+        }
+    }
+// end Prusti glue
+
+fn test1() {
+    let mut cl = closure!(
+        #[requires(i > 4)]
+        #[ensures(result == i + 1)]
+        |i: i32| -> i32 { i + 1 }
+    );
+
+    assert!(map(MyOption::Some(4), &mut cl).unwrap() == 5); //~ ERROR precondition might not hold
 }
 
-fn main() {
+fn test2() {
     let mut count = 0;
-    let mut cl =
-        // requires: i != count
-        // ensures: count == old(count) + 1
-        |i: i32| -> i32 { let _r = 42 / (i - count); count += 1; };
+    let mut cl = closure!(
+        #[view(count: i32)]
+        #[requires(i != *views.count)]
+        #[ensures(*views.count == old(*views.count) + 1)]
+        |i: i32| -> i32 { count += 1; i * 2 }
+    );
 
-    let a = map(Some(1), &mut cl); // works
-    let b = map(Some(1), &mut cl); // <-- precondition (map's) violation here
+    map(MyOption::Some(1), &mut cl);
+    map(MyOption::Some(1), &mut cl); //~ ERROR precondition might not hold
 }
+
+fn main() {}

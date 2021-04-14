@@ -8,8 +8,8 @@ use prusti_contracts::*;
 ])]
 #[ensures(result >= 0 && result <= 99)]
 fn g<T: FnMut(i32) -> i32>(mut f: T) -> i32 {
-    f(10)
-    // f(0) should cause a verification error
+    f(10);
+    f(0) //~ ERROR precondition might not hold
 }
 
 fn main() {
@@ -25,5 +25,5 @@ fn main() {
         #[ensures(result >= -10 && result <= 89)]
         |i: i32| -> i32 { -10 }
     );
-    // g(f); should cause a verification error
+    g(f); //~ ERROR precondition might not hold
 }
