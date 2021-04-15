@@ -9,6 +9,7 @@ use prusti_contracts::*;
 
     #[pure]
     #[trusted]
+    #[ensures(result >= 0)]
     fn vec_len(vec: &Vec<i32>) -> usize {
         vec.len()
     }
@@ -29,8 +30,11 @@ use prusti_contracts::*;
 
     #[trusted]
     #[ensures(vec_len(vec) == old(vec_len(vec)) + 1)]
-    #[ensures(forall(|idx: usize| 0 <= idx && idx < old(vec_len(vec))
-        ==> vec_lookup(vec, idx) == old(vec_lookup(vec, idx))))]
+    #[ensures(
+        forall(|idx: usize| 0 <= idx && idx < old(vec_len(vec))
+            ==> vec_lookup(vec, idx) == old(vec_lookup(vec, idx)),
+            triggers = [(vec_lookup(vec, idx),)])
+    )]
     #[ensures(vec_lookup(vec, old(vec_len(vec))) == value)]
     #[ensures(vec_contains(vec, value))]
     fn vec_push(vec: &mut Vec<i32>, value: i32) {
@@ -62,6 +66,7 @@ fn any_vec<T: Fn(i32) -> bool>(v: &Vec<i32>, f: T) -> bool {
         if f(el) {
             return true;
         }
+        i += 1;
     }
     return false;
 }
@@ -74,13 +79,26 @@ fn main() {
     vec_push(&mut v, 3);
     vec_push(&mut v, 4);
 
+    // sanity check
+    assert!(vec_len(&v) == 4);
+    assert!(vec_lookup(&v, 0) == 1);
+    assert!(vec_lookup(&v, 3) == 4);
+
     assert!(any_vec(
+        &v,
+        closure!(
+            #[requires(true)]
+            #[ensures(result == (i % 3 == 0))]
+            |i: i32| -> bool { i % 3 == 0 }
+        ),
+    ));
+    assert!(!any_vec(
         &v,
         closure!(
             #[requires(true)]
             #[ensures(result == (i == 100))]
             |i: i32| -> bool { i == 100 }
-        ), // should not verify!
+        ),
     ));
     assert!(!any_vec(
         &v,
