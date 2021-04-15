@@ -68,7 +68,7 @@ fn any_vec<T: Fn(i32) -> bool>(v: &Vec<i32>, f: T) -> bool {
         }
         i += 1;
     }
-    return false;
+    false
 }
 
 #[requires(vec_len(v) == 3)]
@@ -97,6 +97,21 @@ fn test2(v: &Vec<i32>) {
             #[requires(true)]
             #[ensures(result == (i == 100))]
             |i: i32| -> bool { i == 100 }
+        ),
+    ));
+}
+
+#[requires(vec_len(v) == 3)]
+#[requires(vec_lookup(v, 0) == 1)]
+#[requires(vec_lookup(v, 1) == 2)]
+#[requires(vec_lookup(v, 2) == 3)]
+fn test3(v: &Vec<i32>) {
+    assert!(any_vec( //~ ERROR might not hold
+        &v,
+        closure!(
+            #[requires(true)]
+            #[ensures(result == (i > 10))]
+            |i: i32| -> bool { i > 10 }
         ),
     ));
 }

@@ -5,8 +5,8 @@ use prusti_contracts::*;
 #[requires(h |=! || [ requires(true) ])]
 #[requires(g |=! || [ requires(true) ])]
 #[ensures(*y == 4)]
-#[ensures(h ~>! || {} {})]
-#[ensures(g ~>! || {} {})]
+#[ensures(h ~> || {} {})]
+#[ensures(g ~> || {} {})]
 // ensures: old(h) () ~~> { outer(h) == self }
 // ensures: old(g) () ~~> { outer(g) == self }
 fn f<T: FnMut() -> i32, U: FnMut() -> i32>(

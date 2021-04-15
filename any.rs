@@ -68,22 +68,14 @@ fn any_vec<T: Fn(i32) -> bool>(v: &Vec<i32>, f: T) -> bool {
         }
         i += 1;
     }
-    return false;
+    false
 }
 
-fn main() {
-    // let v = vec![1, 2, 3, 4];
-    let mut v = vec_new();
-    vec_push(&mut v, 1);
-    vec_push(&mut v, 2);
-    vec_push(&mut v, 3);
-    vec_push(&mut v, 4);
-
-    // sanity check
-    assert!(vec_len(&v) == 4);
-    assert!(vec_lookup(&v, 0) == 1);
-    assert!(vec_lookup(&v, 3) == 4);
-
+#[requires(vec_len(v) == 3)]
+#[requires(vec_lookup(v, 0) == 1)]
+#[requires(vec_lookup(v, 1) == 2)]
+#[requires(vec_lookup(v, 2) == 3)]
+fn test1(v: &Vec<i32>) {
     assert!(any_vec(
         &v,
         closure!(
@@ -92,6 +84,13 @@ fn main() {
             |i: i32| -> bool { i % 3 == 0 }
         ),
     ));
+}
+
+#[requires(vec_len(v) == 3)]
+#[requires(vec_lookup(v, 0) == 1)]
+#[requires(vec_lookup(v, 1) == 2)]
+#[requires(vec_lookup(v, 2) == 3)]
+fn test2(v: &Vec<i32>) {
     assert!(!any_vec(
         &v,
         closure!(
@@ -100,6 +99,13 @@ fn main() {
             |i: i32| -> bool { i == 100 }
         ),
     ));
+}
+
+#[requires(vec_len(v) == 3)]
+#[requires(vec_lookup(v, 0) == 1)]
+#[requires(vec_lookup(v, 1) == 2)]
+#[requires(vec_lookup(v, 2) == 3)]
+fn test3(v: &Vec<i32>) {
     assert!(!any_vec(
         &v,
         closure!(
@@ -109,3 +115,5 @@ fn main() {
         ),
     ));
 }
+
+fn main() {}
