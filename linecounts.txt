@@ -1,0 +1,80 @@
+- everything in lines of code
+- "specification" includes body_invariants
+- in some cases, there is no good distinction between test cases and implementation
+
+vector glue:      39
+option glue:      20
+result glue:      32
+
+all:
+  (vector glue)
+  specification:  15
+  implementation: 11
+  test cases:     47
+
+any:
+  (vector glue)
+  specification:  17
+  implementation: 11
+  test cases:     44
+
+any_err:
+  (vector glue)
+  specification:  17
+  implementation: 11
+  test cases:     44
+
+blameassgn:
+  specification:  5
+  implementation: 4
+  test cases:     15
+
+blameassgn_err:
+  specification:  5
+  implementation: 4
+  test cases:     15
+
+counter:
+  specification:  1
+  implementation: 1
+  test cases:     16
+
+counter_err:
+  specification:  1
+  implementation: 1
+  test cases:     15
+
+delegation:
+  specification:  5
+  implementation: 10
+  test cases:     12
+
+map_vec:
+  (vector glue)
+  specification:  8
+  implementation: 17
+  test cases:     39
+
+option_map:
+  (option glue)
+  specification:  11
+  implementation: 6
+  test cases:     21
+
+option_map_err:
+  (option glue)
+  specification:  11
+  implementation: 6
+  test cases:     22
+
+repeat_with_n:
+  (vector glue)
+  specification:  7
+  implementation: 15
+  test cases:     21
+
+result_uoe:
+  (result glue)
+  specification:  13
+  implementation: 6
+  test cases:     10

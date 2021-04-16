@@ -21,25 +21,25 @@ use prusti_contracts::*;
             }
         }
     }
-
-    #[requires(
-        opt.is_some() ==>
-            f |=! |arg: i32| [ requires(arg == opt.unwrap()) ]
-    )]
-    #[ensures(old(opt.is_some()) == result.is_some())]
-    #[ensures(
-        old(opt.is_some()) ==>
-            f ~>! |arg: i32|
-                { arg == old(opt.unwrap()) }
-                { cl_result == result.unwrap() }
-    )]
-    fn map<F: FnMut(i32) -> i32>(opt: MyOption, f: &mut F) -> MyOption {
-        match opt {
-            MyOption::Some(x) => MyOption::Some(f(x)),
-            MyOption::None => MyOption::None,
-        }
-    }
 // end Prusti glue
+
+#[requires(
+    opt.is_some() ==>
+        f |=! |arg: i32| [ requires(arg == opt.unwrap()) ]
+)]
+#[ensures(old(opt.is_some()) == result.is_some())]
+#[ensures(
+    old(opt.is_some()) ==>
+        f ~>! |arg: i32|
+            { arg == old(opt.unwrap()) }
+            { cl_result == result.unwrap() }
+)]
+fn map<F: FnMut(i32) -> i32>(opt: MyOption, f: &mut F) -> MyOption {
+    match opt {
+        MyOption::Some(x) => MyOption::Some(f(x)),
+        MyOption::None => MyOption::None,
+    }
+}
 
 fn main() {
     let mut cl = closure!(

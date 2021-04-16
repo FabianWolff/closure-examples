@@ -32,6 +32,7 @@ use prusti_contracts::*;
                 MyResult::Err(err) => *err,
             }
         }
+// end Prusti glue
 
         #[requires(
             !self.is_ok() ==>
@@ -53,7 +54,6 @@ use prusti_contracts::*;
             }
         }
     }
-// end Prusti glue
 
 fn main() {
     let mut cl = closure!(
