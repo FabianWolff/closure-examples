@@ -56,7 +56,7 @@ impl<T: Copy> Node<T> {
 
         if let Some(next) = next {
             // inv := inv
-            // vs := vs ++ [self.el]
+            // vs := vs ++ [old(self.el)]
             next.fold(f);
         }
     }
