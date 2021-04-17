@@ -1,28 +1,5 @@
 use prusti_contracts::*;
 
-// Prusti glue for Option<i32>
-    enum MyOption {
-        None,
-        Some(i32),
-    }
-
-    impl MyOption {
-        #[pure]
-        fn is_some(&self) -> bool {
-            matches!(self, MyOption::Some(_))
-        }
-
-        #[pure]
-        #[requires(self.is_some())]
-        fn unwrap(&self) -> i32 {
-            match self {
-                MyOption::Some(n) => *n,
-                MyOption::None => unreachable!(),
-            }
-        }
-    }
-// end Prusti glue
-
 #[requires(
     opt.is_some() ==>
         f |=! |arg: i32| [ requires(arg == opt.unwrap()) ]
@@ -65,3 +42,26 @@ fn test2() {
 }
 
 fn main() {}
+
+// Prusti glue for Option<i32>
+    enum MyOption {
+        None,
+        Some(i32),
+    }
+
+    impl MyOption {
+        #[pure]
+        fn is_some(&self) -> bool {
+            matches!(self, MyOption::Some(_))
+        }
+
+        #[pure]
+        #[requires(self.is_some())]
+        fn unwrap(&self) -> i32 {
+            match self {
+                MyOption::Some(n) => *n,
+                MyOption::None => unreachable!(),
+            }
+        }
+    }
+// end Prusti glue

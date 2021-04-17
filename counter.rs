@@ -18,8 +18,6 @@ fn main() {
     );
 
     inc();
-    //foo(inc); // fails to verify
     inc();
     foo(inc);
-    //assert!(x >= 2);
 }

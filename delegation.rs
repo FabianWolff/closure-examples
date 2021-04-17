@@ -33,5 +33,4 @@ fn main() {
     f(&mut y, &mut h, &mut g);
 
     assert!(y == 4);
-    // assert!(x == 43);
 }

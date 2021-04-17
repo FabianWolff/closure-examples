@@ -6,33 +6,6 @@ vector glue:      39
 option glue:      20
 result glue:      32
 
-all:
-  (vector glue)
-  specification:  15
-  implementation: 11
-  test cases:     47
-
-any:
-  (vector glue)
-  specification:  17
-  implementation: 11
-  test cases:     44
-
-any_err:
-  (vector glue)
-  specification:  17
-  implementation: 11
-  test cases:     44
-
-blameassgn:
-  specification:  5
-  implementation: 4
-  test cases:     15
-
-blameassgn_err:
-  specification:  5
-  implementation: 4
-  test cases:     15
 
 counter:
   specification:  1
@@ -49,11 +22,15 @@ delegation:
   implementation: 10
   test cases:     12
 
-map_vec:
-  (vector glue)
-  specification:  8
-  implementation: 17
-  test cases:     39
+blameassgn:
+  specification:  5
+  implementation: 4
+  test cases:     15
+
+blameassgn_err:
+  specification:  5
+  implementation: 4
+  test cases:     15
 
 option_map:
   (option glue)
@@ -67,14 +44,38 @@ option_map_err:
   implementation: 6
   test cases:     22
 
-repeat_with_n:
+map_vec:
   (vector glue)
-  specification:  7
-  implementation: 15
-  test cases:     21
+  specification:  8
+  implementation: 17
+  test cases:     39
 
 result_uoe:
   (result glue)
   specification:  13
   implementation: 6
   test cases:     10
+
+repeat_with_n:
+  (vector glue)
+  specification:  7
+  implementation: 15
+  test cases:     21
+
+any:
+  (vector glue)
+  specification:  17
+  implementation: 11
+  test cases:     44
+
+any_err:
+  (vector glue)
+  specification:  17
+  implementation: 11
+  test cases:     44
+
+all:
+  (vector glue)
+  specification:  15
+  implementation: 11
+  test cases:     47
