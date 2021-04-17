@@ -46,9 +46,9 @@ impl<T: Copy> Node<T> {
     //     f |= |n| {
     //         requires: outer(self.els()).contains(n.el)
     //             && inv(outer(v), self)
-    //         ensures: inv(outer(v) ++ [n.el], self)
+    //         ensures: inv(outer(v) ++ [old(n.el)], self)
     //     }
-    // ensures: inv(old(self.els()), f)
+    // ensures: inv(vs ++ old(self.els()), f)
     fn fold<F: FnMut(Box<Self>)> (mut self: Box<Self>, mut f: F) {
         let mut next = None;
         std::mem::swap (&mut next, &mut self.next);
@@ -70,10 +70,8 @@ fn main() {
     // inv(v, cl) := Node::opt_els(*cl.rev_head) == reverse(v)
     // vs := []
     list.fold(
-        // view: rev_head := rev_head
-        // ensures: n.el == old(n.el)
         // ensures: Node::opt_els(*rev_head)
-        //     == [n.el] ++ old(Node::opt_els(*rev_head))
+        //     == [old(n.el)] ++ old(Node::opt_els(*rev_head))
         |mut n| { std::mem::swap(&mut *rev_head, &mut n.next);
                   *rev_head = Some(n); });
 
